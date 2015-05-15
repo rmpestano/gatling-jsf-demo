@@ -1,5 +1,97 @@
 = Gatling JSF demo
 
-This sample app just shows how to execute JSF requests through http://gatling.io/#/[Gatling stress tool] against http://www.primefaces.org/showcase/[Primefaces showcase]. 
+This sample app just shows how to execute JSF requests through http://gatling.io/#/[Gatling stress tool] against http://www.primefaces.org/showcase/[Primefaces showcase^].
+
+== Running it
+
+----
+mvn gatling:execute
+----
+
+== Example
+
+The only difference when working with JSF is that you need to handle the http://stackoverflow.com/questions/2910741/what-is-viewstate-in-jsf-and-how-is-it-used[Viewstate^] which basically stores components state.
+
+So the essence of this demo is the http://gatling.io/docs/2.1.6/http/http_check.html[Gatling checks] for viewstate:
+
+[source, scala]
+----
+  val jsfViewStateCheck = css("input[name='javax.faces.ViewState']", "value")
+    .saveAs("viewState")
+
+  val jsfPartialViewStateCheck = xpath("//update[contains(@id,'ViewState')]")
+    .saveAs("viewState")
+----
+
+and here the template requests that calls the checks:
+
+[source, scala]
+----
+def jsfGet(name: String, url: Expression[String]) =
+    http(name)
+      .get(url)
+      .check(jsfViewStateCheck)
+
+  def jsfPost(name: String, url: Expression[String]) = http(name)
+    .post(url)
+    .formParam("javax.faces.ViewState", "${viewState}")
+    .check(jsfViewStateCheck)
+
+  def jsfPartialPost(name: String, url: Expression[String]) = http(name)
+    .post(url)
+    .header("Faces-Request", "partial/ajax") <1>
+    .formParam("javax.faces.partial.ajax", "true") <1>
+    .formParam("javax.faces.ViewState", "${viewState}") <2>
+    .check(jsfPartialViewStateCheck)
+----
+
+<1> JSF ajax call indication, JSF will return a xml in the response
+<2> already stored (in gatling session) view state
+
+So we basically have two kinds of request, a _normal_ and a _partial_ http request. Partial requests are mainly to deal with ajax calls (e.g p:ajax or f:ajax).
+
+IMPORTANT: As you can see the *viewState* has already been stored in gatling session on a previous request so basically a *jsfGet* call has already been made.
+
+Here is a JSF ajax button call:
+
+----
+ <p:commandButton value="Ajax Submit" id="ajax" update="growl" actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" />
+----
+
+NOTE: This code is taken from primefaces showcase: http://www.primefaces.org/showcase/ui/button/commandButton.xhtml
+
+and here is the correspondent Gatling call:
+
+[source, scala]
+----
+def ajaxButtonCall = jsfPartialPost("request_ajax_button", "/ui/button/commandButton.xhtml")
+    .formParam("javax.faces.source", "${btAjax}")
+    .formParam("javax.faces.partial.execute", "@all")
+    .formParam("${btAjax}", "${btAjax}")
+    .formParam("${form}", "${form}")
+    .check(status.is(200))
+----
+
+As state before we need a previous JSF call to store button id (*${btAjax}*), form id (*${form}*) and *viewState* in session, here is the *initial* call, it just GETs the page:
+
+[source, scala]
+----
+ jsfGet("saveState", "/ui/button/commandButton.xhtml")
+        .check(status.is(200), ajaxButtonIdCheck, formIdCheck)
+----
+
+here is checks that stores the components ids in Gatling session:
+
+----
+  val ajaxButtonIdCheck = css("button[id$='ajax']", "id")
+    .saveAs("btAjax")
+
+  val formIdCheck = css("form", "id")
+    .saveAs("form")
+----
+
+
+
+
 
 
