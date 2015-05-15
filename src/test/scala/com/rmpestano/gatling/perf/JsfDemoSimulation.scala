@@ -23,11 +23,6 @@ class JsfDemoSimulation extends Simulation {
 
   //JSF requests and scenarios
 
-  val jsf_headers = Map(
-    "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Pragma" -> "no-cache",
-    "X-Requested-With" -> "XMLHttpRequest")
-
   val jsfViewStateCheck = css("input[name='javax.faces.ViewState']", "value")
     .saveAs("viewState")
 
