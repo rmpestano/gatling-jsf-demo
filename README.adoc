@@ -90,7 +90,84 @@ here is checks that stores the component ids in Gatling session:
     .saveAs("form")
 ----
 
+== Ajax Behaviour event
 
+For ajax behaviour event the approach is quite similar, here goes an example of *keyup* event on page http://www.primefaces.org/showcase/ui/ajax/event.xhtml[http://www.primefaces.org/showcase/ui/ajax/event.xhtml^]:
+
+.com.rmpestano.gatling.perf.AjaxEventSimulation
+[source,scala]
+----
+  val formIdCheck = css("form", "id")
+    .saveAs("form")
+
+  val inputIdCheck = css("input[id$='firstname']", "id")
+    .saveAs("inputId") //stores in gatling session id of input with id that endswith 'firstname'
+
+  val outputIdCheck = css("span[id$='out1']", "id")
+    .saveAs("outputId")
+
+  //checks the partial response xml result
+    val outputValueCheck = xpath("//*[@id, contains(@id,'out1') and @value ='Gatling, JSF and Primefaces rules']")
+    .saveAs("outputValue")
+
+    def ajaxEventRequest = jsfPartialPost("request_ajax_event", "/ui/ajax/event.xhtml")
+        .formParam("javax.faces.source", "${inputId}")
+        .formParam("javax.faces.partial.execute", "${inputId}")
+        .formParam("javax.faces.behavior.event", "keyup")
+        .formParam("javax.faces.partial.event", "keyup")
+        .formParam("javax.faces.partial.render","${outputId}")
+        .formParam("${inputId}", "Gatling, JSF and Primefaces rules")
+        .formParam("${form}", "${form}")
+        .check(status.is(200), outputValueCheck)
+
+    val AjaxEventScenario = scenario("ajaxEvent scenario")
+       .exec(
+         jsfGet("initialRequest", "/ui/ajax/event.xhtml")
+           .check(status.is(200), inputIdCheck,outputIdCheck, formIdCheck)
+       )
+       .pause(2)
+       .exec(ajaxEventRequest)
+       .pause(1)
+----
+
+here is Gatling response to confirm the partial event is fired:
+
+----
+<partial-response id="j_id1"><changes><update id="j_idt87:out1"><![CDATA[<span id="j_idt87:out1">Gatling, JSF and Primefaces rules</span>]]></update><update id="j_id1:javax.faces.ViewState:0"><![CDATA[5642006804874081440:6246997700145170162]]></update></changes></partial-response>
+----
+
+== Test Result
+
+the output should be something like this:
+
+----
+---- Global Information --------------------------------------------------------
+> request count                                        208 (OK=208    KO=0     )
+> min response time                                    230 (OK=230    KO=-     )
+> max response time                                   3317 (OK=3317   KO=-     )
+> mean response time                                   436 (OK=436    KO=-     )
+> std deviation                                        436 (OK=436    KO=-     )
+> response time 50th percentile                        249 (OK=249    KO=-     )
+> response time 75th percentile                        390 (OK=390    KO=-     )
+> mean requests/sec                                  15.81 (OK=15.81  KO=-     )
+---- Response Time Distribution ------------------------------------------------
+> t < 800 ms                                           182 ( 88%)
+> 800 ms < t < 1200 ms                                  10 (  5%)
+> t > 1200 ms                                           16 (  8%)
+> failed                                                 0 (  0%)
+================================================================================
+
+Reports generated in 1s.
+Please open the following file: /home/pestano/projects/gatling-jsf-demo/target/gatling/results/commandbuttonsimulation-1431729180680/index.html
+Global: percentage of successful requests is greater than 95 : true
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 20.186s
+[INFO] Finished at: Fri May 15 19:33:15 BRT 2015
+[INFO] Final Memory: 7M/150M
+[INFO] ------------------------------------------------------------------------
+----
 
 
 

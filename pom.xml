@@ -48,6 +48,7 @@
                         <configuration>
                             <dataFolder>src/test/resources/data</dataFolder>
                             <bodiesFolder>src/test/resources/request-bodies</bodiesFolder>
+                            <runMultipleSimulations>true</runMultipleSimulations>
                             <!--<simulationsFolder>src/test/scala/com/cdi/crud/perf</simulationsFolder>-->
                         </configuration>
                         <executions>
