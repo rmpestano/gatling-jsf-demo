@@ -10,7 +10,7 @@ mvn gatling:execute
 
 == Example
 
-The only difference when working with JSF is that you need to handle the http://stackoverflow.com/questions/2910741/what-is-viewstate-in-jsf-and-how-is-it-used[Viewstate^] which basically stores components state.
+When working with JSF you need to handle the http://stackoverflow.com/questions/2910741/what-is-viewstate-in-jsf-and-how-is-it-used[Viewstate^] which basically stores JSF component tree state.
 
 So the essence of this demo is the http://gatling.io/docs/2.1.6/http/http_check.html[Gatling checks] for viewstate:
 
@@ -72,7 +72,7 @@ def ajaxButtonCall = jsfPartialPost("request_ajax_button", "/ui/button/commandBu
     .check(status.is(200))
 ----
 
-As state before we need a previous JSF call to store button id (*${btAjax}*), form id (*${form}*) and *viewState* in session, here is the *initial* call, it just GETs the page:
+As stated before we need a previous JSF call to store button id (*${btAjax}*), form id (*${form}*) and *viewState* in session. Here is the *initial* call:
 
 [source, scala]
 ----
@@ -80,7 +80,7 @@ As state before we need a previous JSF call to store button id (*${btAjax}*), fo
         .check(status.is(200), ajaxButtonIdCheck, formIdCheck)
 ----
 
-here is checks that stores the component ids in Gatling session:
+and then the checks that stores component's id in Gatling session:
 
 ----
   val ajaxButtonIdCheck = css("button[id$='ajax']", "id")
@@ -94,7 +94,7 @@ here is checks that stores the component ids in Gatling session:
 
 For ajax behaviour event the approach is quite similar, here goes an example of *keyup* event on page http://www.primefaces.org/showcase/ui/ajax/event.xhtml[http://www.primefaces.org/showcase/ui/ajax/event.xhtml^]:
 
-.com.rmpestano.gatling.perf.AjaxEventSimulation
+
 [source,scala]
 ----
   val formIdCheck = css("form", "id")
@@ -169,6 +169,9 @@ Global: percentage of successful requests is greater than 95 : true
 [INFO] ------------------------------------------------------------------------
 ----
 
+Also some detailed reports about the simulation are generated:
+
+image::gatling-report-example.png[Gatling report, width=800,scaledwidth=100%]
 
 
 

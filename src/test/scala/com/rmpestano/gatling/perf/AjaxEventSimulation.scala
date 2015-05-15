@@ -17,8 +17,8 @@ class AjaxEventSimulation extends Simulation {
     .saveAs("outputId")
 
   //checks the partial response xml result, example:
-  //<partial-response id="j_id1"><changes><update id="j_idt87:out1"><![CDATA[<span id="j_idt87:out1">ss</span>]]>
-   val outputValueCheck = xpath("//*[@id, contains(@id,'out1') and @value ='Gatling, JSF and Primefaces rules']")
+  //<partial-response id="j_id1"><changes><update id="j_idt87:out1"><![CDATA[<span id="j_idt87:out1">Gatling, JSF and Primefaces rules</span>]]>
+  val outputValueCheck = xpath("//*[@id, contains(@id,'out1') and @value ='Gatling, JSF and Primefaces rules']")
     .saveAs("outputValue")
 
 
@@ -27,7 +27,7 @@ class AjaxEventSimulation extends Simulation {
     .formParam("javax.faces.partial.execute", "${inputId}")
     .formParam("javax.faces.behavior.event", "keyup")
     .formParam("javax.faces.partial.event", "keyup")
-    .formParam("javax.faces.partial.render","${outputId}")
+    .formParam("javax.faces.partial.render", "${outputId}")
     .formParam("${inputId}", "Gatling, JSF and Primefaces rules")
     .formParam("${form}", "${form}")
     .check(status.is(200), outputValueCheck)
@@ -35,7 +35,7 @@ class AjaxEventSimulation extends Simulation {
   val AjaxEventScenario = scenario("ajaxEvent scenario")
     .exec(
       jsfGet("initialRequest", "/ui/ajax/event.xhtml")
-        .check(status.is(200), inputIdCheck,outputIdCheck, formIdCheck)
+        .check(status.is(200), inputIdCheck, outputIdCheck, formIdCheck)
     )
     .pause(2)
     .exec(ajaxEventRequest)
