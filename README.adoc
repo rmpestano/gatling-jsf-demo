@@ -169,7 +169,7 @@ Global: percentage of successful requests is greater than 95 : true
 [INFO] ------------------------------------------------------------------------
 ----
 
-Also some detailed reports about the simulation are generated:
+Also some detailed reports about the simulation are generated at target/gatling folder:
 
 image::gatling-report-example.png[Gatling report, width=800,scaledwidth=100%]
 
