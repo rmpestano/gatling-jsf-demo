@@ -58,7 +58,7 @@ Here is a JSF ajax button call:
  <p:commandButton value="Ajax Submit" id="ajax" update="growl" actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" />
 ----
 
-NOTE: This code is taken from primefaces showcase: http://www.primefaces.org/showcase/ui/button/commandButton.xhtml
+NOTE: This code is taken from Primefaces showcase: http://www.primefaces.org/showcase/ui/button/commandButton.xhtml[http://www.primefaces.org/showcase/ui/button/commandButton.xhtml^]
 
 and here is the correspondent Gatling call:
 
@@ -80,7 +80,7 @@ As state before we need a previous JSF call to store button id (*${btAjax}*), fo
         .check(status.is(200), ajaxButtonIdCheck, formIdCheck)
 ----
 
-here is checks that stores the components ids in Gatling session:
+here is checks that stores the component ids in Gatling session:
 
 ----
   val ajaxButtonIdCheck = css("button[id$='ajax']", "id")
