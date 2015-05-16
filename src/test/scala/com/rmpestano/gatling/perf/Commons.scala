@@ -30,6 +30,12 @@ object Commons {
     .saveAs("form")
 
 
+  val printSession =
+   exec(session => {
+    println(session)
+    session
+  })
+
 
   def jsfGet(name: String, url: Expression[String]) =
     http(name)
