@@ -10,12 +10,13 @@ import com.rmpestano.gatling.perf.Commons._
 
 class DatatableSelectionSimulation extends Simulation {
 
-  val buttonIdCheck = css("button[class*='ui-button-icon-only']")
+  val buttonIdCheck = css("button[class*='ui-button-icon-only']","id")
     .saveAs("buttonId")
 
   //if car dialog is present, the call was successful
-  // dialog partial response contains <div id="form:carDetail"
-  val dialogFormCheck = xpath("//*[@id='form:carDetail']")
+  // dialog partial response contains: <partial-response id="j_id1"><changes><update id="form:carDetail"><![CDATA[<div id="form:carDetail" class="ui-outputpanel ui-widget" style="text-align:center;"><table id="form:j_idt152"
+  val dialogFormCheck = css("img[src*='/showcase/javax.faces.resource/demo/images/car/']","src")
+    .saveAs("dialogImg")
 
 
 
@@ -23,7 +24,8 @@ class DatatableSelectionSimulation extends Simulation {
     .formParam("javax.faces.source", "${buttonId}")
     .formParam("javax.faces.partial.execute", "@all")
     .formParam("javax.faces.partial.render", "form:carDetail")
-    .formParam("form", "${form}")
+    .formParam("form", "form")
+    .formParam("${buttonId}","${buttonId}")
     .check(status.is(200), dialogFormCheck)
 
   val DatatableSelectScenario = scenario("datatable selection scenario")
@@ -34,6 +36,10 @@ class DatatableSelectionSimulation extends Simulation {
     .pause(2)
     .exec(datatableSelectCar)
     .pause(1)
+    .exec(session => {
+    println(session)
+    session
+  })
 
   setUp(
     DatatableSelectScenario.inject(atOnceUsers(2))

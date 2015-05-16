@@ -21,7 +21,6 @@ class AjaxEventSimulation extends Simulation {
   val outputValueCheck = xpath("//*[contains(@id,'out1') and contains(text(),'Gatling, JSF and Primefaces rules')]")
 
 
-
   def ajaxEventRequest = jsfPartialPost("request_ajax_event", "/ui/ajax/event.xhtml")
     .formParam("javax.faces.source", "${inputId}")
     .formParam("javax.faces.partial.execute", "${inputId}")
