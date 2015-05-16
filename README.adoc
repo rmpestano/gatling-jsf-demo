@@ -117,7 +117,7 @@ TIP: css selector *$=* denotes to _'endsWith'_ and is very helpful when working 
 
 As you've probably noticed, there is a *growlResponseCheck* after the request completes to assure that it has performed as the real application.
 
-The response contains the growl component, use firebug tab *response* to se its format:
+The response contains the growl component, use firebug tab *response* to see its format:
 
 [source, xml]
 ----
