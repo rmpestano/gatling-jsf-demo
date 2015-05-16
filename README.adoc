@@ -178,7 +178,7 @@ def datatableSelectCarRowEvent = jsfPartialPost("request_datatable_select_car", 
     .check(status.is(200), growlCheck)
 ----
 
-*growlCheck* verifies the *partial response* which will be something like below:
+*growlCheck* verifies the _partial response_ which will be something like below:
 
 [source,xml]
 ----
