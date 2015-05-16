@@ -151,30 +151,31 @@ TIP: For debugging purposes just enable request and response logs in test/resour
 the output should be something like this:
 
 ----
+================================================================================
 ---- Global Information --------------------------------------------------------
-> request count                                        208 (OK=208    KO=0     )
-> min response time                                    230 (OK=230    KO=-     )
-> max response time                                   3317 (OK=3317   KO=-     )
-> mean response time                                   436 (OK=436    KO=-     )
-> std deviation                                        436 (OK=436    KO=-     )
-> response time 50th percentile                        249 (OK=249    KO=-     )
-> response time 75th percentile                        390 (OK=390    KO=-     )
-> mean requests/sec                                  15.81 (OK=15.81  KO=-     )
+> request count                                        110 (OK=110    KO=0     )
+> min response time                                    231 (OK=231    KO=-     )
+> max response time                                   1670 (OK=1670   KO=-     )
+> mean response time                                   383 (OK=383    KO=-     )
+> std deviation                                        287 (OK=287    KO=-     )
+> response time 50th percentile                        244 (OK=244    KO=-     )
+> response time 75th percentile                        266 (OK=266    KO=-     )
+> mean requests/sec                                 13.019 (OK=13.019 KO=-     )
 ---- Response Time Distribution ------------------------------------------------
-> t < 800 ms                                           182 ( 88%)
-> 800 ms < t < 1200 ms                                  10 (  5%)
-> t > 1200 ms                                           16 (  8%)
+> t < 800 ms                                           101 ( 92%)
+> 800 ms < t < 1200 ms                                   5 (  5%)
+> t > 1200 ms                                            4 (  4%)
 > failed                                                 0 (  0%)
 ================================================================================
 
-Reports generated in 1s.
-Please open the following file: /home/pestano/projects/gatling-jsf-demo/target/gatling/results/commandbuttonsimulation-1431729180680/index.html
-Global: percentage of successful requests is greater than 95 : true
+Reports generated in 0s.
+Please open the following file: /home/pestano/projects/gatling-jsf-demo/target/gatling/results/ajaxeventsimulation-1431742082396/index.html
+Global: percentage of successful requests is greater than 99 : true
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 20.186s
-[INFO] Finished at: Fri May 15 19:33:15 BRT 2015
+[INFO] Total time: 15.516s
+[INFO] Finished at: Fri May 15 23:08:12 BRT 2015
 [INFO] Final Memory: 7M/150M
 [INFO] ------------------------------------------------------------------------
 ----
