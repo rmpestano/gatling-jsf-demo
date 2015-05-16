@@ -12,22 +12,24 @@ TIP: To chose a specific simulation use _-D_ flag, example: +
 _-Dgatling.simulationClass=com.rmpestano.gatling.perf.DatatableSelectionSimulation_ +
 otherwise all simulations will run.
 
-== Example
+== JSF Viewstate
 
-When working with JSF you need to handle the http://stackoverflow.com/questions/2910741/what-is-viewstate-in-jsf-and-how-is-it-used[Viewstate^] which basically stores JSF component tree state.
+When working with JSF you need to handle the http://stackoverflow.com/questions/2910741/what-is-viewstate-in-jsf-and-how-is-it-used[ViewState^] which basically stores JSF component tree state and must be preserved across requests.
 
-So the essence of this demo is the http://gatling.io/docs/2.1.6/http/http_check.html[Gatling checks] for viewstate:
+The way to extract information from _http requests_ with Gatling is using http://gatling.io/docs/2.1.6/http/http_check.html[http checks], here is how its done for JSF ViewState:
 
 [source, scala]
 ----
   val jsfViewStateCheck = css("input[name='javax.faces.ViewState']", "value")
-    .saveAs("viewState")
+    .saveAs("viewState") <1>
 
   val jsfPartialViewStateCheck = xpath("//update[contains(@id,'ViewState')]")
-    .saveAs("viewState")
+    .saveAs("viewState") <1>
 ----
+<1> Saves the viewState in Gatling session.
 
-and here the template requests that calls the checks:
+
+These checks needs to be called on each request so we can preserve the viewState. An idea is to put them in _template_ requests like below:
 
 [source, scala]
 ----
@@ -36,12 +38,12 @@ def jsfGet(name: String, url: Expression[String]) =
       .get(url)
       .check(jsfViewStateCheck)
 
-  def jsfPost(name: String, url: Expression[String]) = http(name)
+def jsfPost(name: String, url: Expression[String]) = http(name)
     .post(url)
     .formParam("javax.faces.ViewState", "${viewState}")
     .check(jsfViewStateCheck)
 
-  def jsfPartialPost(name: String, url: Expression[String]) = http(name)
+def jsfPartialPost(name: String, url: Expression[String]) = http(name)
     .post(url)
     .header("Faces-Request", "partial/ajax") <1>
     .formParam("javax.faces.partial.ajax", "true") <1>
@@ -52,11 +54,14 @@ def jsfGet(name: String, url: Expression[String]) =
 <1> JSF _ajax_ call indication, JSF will return a xml in the response
 <2> already stored (in gatling session) view state
 
-So we basically have two kinds of request, a _normal_ and a _partial_ http request. Partial requests are mainly to deal with ajax calls (e.g p:ajax or f:ajax).
+So we basically have two kinds of request, a _normal_ and a _partial_ http request.
+Partial requests are mainly to deal with ajax calls (e.g p:ajax or f:ajax).
 
-IMPORTANT: As you can see the *viewState* has already been stored in gatling session on a previous request so basically a *jsfGet* call has already been made.
+IMPORTANT: As you can see, in *post* requests the *viewState* already must be present in gatling session.
 
-Here is a JSF ajax button call:
+== CommandButton ajax
+
+Here is an example of JSF ajax button call:
 
 ----
  <p:commandButton value="Ajax Submit" id="ajax" update="growl" actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" />
@@ -64,37 +69,88 @@ Here is a JSF ajax button call:
 
 NOTE: This code is taken from Primefaces showcase: http://www.primefaces.org/showcase/ui/button/commandButton.xhtml[http://www.primefaces.org/showcase/ui/button/commandButton.xhtml^]
 
-and here is the correspondent Gatling call:
+And here is the correspondent Gatling call:
 
 [source, scala]
 ----
 def ajaxButtonCall = jsfPartialPost("request_ajax_button", "/ui/button/commandButton.xhtml")
     .formParam("javax.faces.source", "${btAjax}")
     .formParam("javax.faces.partial.execute", "@all")
+    .formParam(javax.faces.partial.render:"${growlId}")
     .formParam("${btAjax}", "${btAjax}")
     .formParam("${form}", "${form}")
-    .check(status.is(200))
+    .check(status.is(200),growlResponseCheck)
 ----
 
-As stated before we need a previous JSF call to store variables in *Gatling session* like button id in *${btAjax}* variable, form id in *${form}* and *viewState* in *${viewState}*. Here is the *initial* call:
+To find which params you need to pass in the request, *firebug* is your best friend:
+
+image::firebug.png[Furebug, width=800,scaledwidth=100%]
+
+=== The initial call
+
+As stated before we need a previous JSF call to extract and store variables in *Gatling session* like button id in *${btAjax}* variable, form id in *${form}* and so on.
+
+Here is the *initial* call:
 
 [source, scala]
 ----
  jsfGet("saveState", "/ui/button/commandButton.xhtml")
-        .check(status.is(200), ajaxButtonIdCheck, formIdCheck)
+        .check(status.is(200), ajaxButtonIdCheck, formIdCheck,growlIdCheck)
 ----
 
-and then the checks that stores component's id in Gatling session:
+and then the checks that stores the component's id needed in the request:
 
 ----
-  val ajaxButtonIdCheck = css("button[id$='ajax']", "id")
+val ajaxButtonIdCheck = css("button[id$='ajax']", "id")
     .saveAs("btAjax")
 
-  val formIdCheck = css("form", "id")
+val formIdCheck = css("form", "id")
     .saveAs("form")
+
+val growlIdCheck = css("span[id$='growl']", "id")
+    .saveAs("growlId")
 ----
 
-Complete commmandButton simulation can be https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/CommandButtonSimulation.scala[found here^].
+TIP: css selector *$=* denotes to _'endsWith'_ and is really helpful when working with JSF _prepended_ id strategy.
+
+=== Check the response
+
+As you've probably noticed, there is a *growlResponseCheck* after the request completes to assure that it has performed as the real application.
+
+The message *Welcome to Primefaces!!* is shown in growl component in the following format (again firebug is your best friend, use firebug tab *response*):
+
+[source, xml]
+----
+<partial-response id="j_id1"><changes><update id="j_idt87:growl"><![CDATA[<span id="j_idt87:growl" class="ui-growl-pl"
+data-widget="widget_j_idt87_growl" data-summary="data-summary" data-severity="all,error" data-redisplay="true"></span>
+<script id="j_idt87:growl_s" type="text/javascript">$(function(){PrimeFaces.cw('Growl','widget_j_idt87_growl',{id:'j_idt87:growl',
+sticky:false,life:2000,escape:true,msgs:[{summary:"Welcome to Primefaces!!",detail:"",severity:'info'}]});});</script>]]></update>
+<update id="j_id1:javax.faces.ViewState:0"><![CDATA[3557342521411359398:379028951273673786]]></update></changes></partial-response>
+----
+
+IMPORTANT: Gatling response is a bit different then firebug (in this case) and that's because Gatling *DOES NOT* execute javascript contained in responses (that's a browser thing)
+[source,xml]
+.Gatling response
+----
+<partial-response id="j_id1"><changes><update id="j_idt87:growl"><![CDATA[<span id="j_idt87:growl" class="ui-growl-pl"
+data-widget="widget_j_idt87_growl" data-summary="data-summary" data-severity="all,error" data-redisplay="true"></span>
+<script id="j_idt87:growl_s" type="text/javascript">$(function(){PrimeFaces.cw('Growl','widget_j_idt87_growl',
+{id:'j_idt87:growl',sticky:false,life:2000,escape:true,msgs:[]});});</script>]]></update>
+<update id="j_id1:javax.faces.ViewState:0"><![CDATA[5739601299644801453:-7228355357233819622]]></update>
+</changes></partial-response>
+----
+
+There are multiple ways to check that response, I'll use xpath this time:
+
+[source, scala]
+----
+  val growlResponseCheck = xpath("//*[contains(text(),'growl_s')]")
+  //css selector example
+  //val growlResponseCheck = css("script[id*='growl_s']")
+----
+
+
+Complete CommmandButton simulation can be https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/CommandButtonSimulation.scala[found here^].
 
 == Ajax Behaviour event
 
@@ -107,13 +163,13 @@ For ajax behaviour event the approach is quite similar, here goes an example of 
     .saveAs("form")
 
   val inputIdCheck = css("input[id$='firstname']", "id")
-    .saveAs("inputId") //stores in gatling session id of input with id that endswith 'firstname'
+    .saveAs("inputId") //stores in gatling session id of input which id that endswith 'firstname'
 
   val outputIdCheck = css("span[id$='out1']", "id")
     .saveAs("outputId")
 
   //checks the partial response xml result
-    val outputValueCheck = xpath("//*[contains(@id,'out1') and contains(text(),'Gatling, JSF and Primefaces rules')]")
+  val outputValueCheck = xpath("//*[contains(@id,'out1') and contains(text(),'Gatling, JSF and Primefaces rules')]")
 
 
   def ajaxEventRequest = jsfPartialPost("request_ajax_event", "/ui/ajax/event.xhtml")
@@ -190,11 +246,10 @@ $(function(){PrimeFaces.cw('Growl','widget_form_msgs',{id:'form:msgs',sticky:fal
 <update id="j_id1:javax.faces.ViewState:0"><![CDATA[-5013885715335809736:669939156470551654]]></update></changes></partial-response>
 ----
 
-TIP: Use firebug *tab 'network'* to check request and response format
-
 and here is the check:
 
 [source, scala]
+.Partial response check
 ----
  val growlCheck = css("script[id$='msgs_s']")
   .saveAs("growlValue") //save is just to confirm in printSession

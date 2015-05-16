@@ -20,50 +20,42 @@ class CommandButtonSimulation extends Simulation {
   val nonAjaxButtonIdCheck = css("button[id$='nonAjax']", "id")
     .saveAs("btNonAjax")
 
+  val growlIdCheck = css("span[id$='growl']", "id")
+    .saveAs("growlId")
+
+  val growlResponseCheck = xpath("//*[contains(text(),'growl_s')]")
+  //val growlResponseCheck = css("script[id*='growl_s']")
 
   def ajaxButtonCall = jsfPartialPost("request_ajax_button", "/ui/button/commandButton.xhtml")
     .formParam("javax.faces.source", "${btAjax}")
     .formParam("javax.faces.partial.execute", "@all")
+    .formParam("javax.faces.partial.render", "${growlId}")
     .formParam("${btAjax}", "${btAjax}")
     .formParam("${form}", "${form}")
-    .check(status.is(200))
+    .check(status.is(200), growlResponseCheck)
 
-  def normalButtonRequest =
+  def normalButtonCall =
     jsfPost("normal_request", "/ui/button/commandButton.xhtml")
       .formParam("${btNonAjax}", "${btNonAjax}")
       .formParam("${form}", "${form}")
       .check(status.is(200))
 
-  def ajaxEventRequest = jsfPartialPost("request_ajax_event", "/ui/ajax/event.xhtml")
-    .formParam("javax.faces.source", "${btAjax}")
-    .formParam("javax.faces.partial.execute", "@all")
-    .formParam("${btAjax}", "${btAjax}")
-    .formParam("${form}", "${form}")
-    .check(status.is(200))
-
   val commandButtonScenario = scenario("commandButton scenario")
     .exec(
       jsfGet("saveState", "/ui/button/commandButton.xhtml")
-        .check(status.is(200), ajaxButtonIdCheck, formIdCheck, nonAjaxButtonIdCheck)
+        .check(status.is(200), ajaxButtonIdCheck, formIdCheck, nonAjaxButtonIdCheck, growlIdCheck)
     )
     .pause(2)
-
-    //just prints the session
-    .exec(session => {
-    println(session)
-    session
-  })
+    .exec(ajaxButtonCall)
     .pause(100 milliseconds)
-    .exec(normalButtonRequest)
+    .exec(normalButtonCall)
     .pause(1)
 
-    .exec(session => {
-    println(session)
-    session
-  })
+  //just prints the session
+  printSession
 
   setUp(
-    commandButtonScenario.inject(atOnceUsers(2))
+    commandButtonScenario.inject(atOnceUsers(1))
   )
     .protocols(httpProtocol)
     .assertions(
