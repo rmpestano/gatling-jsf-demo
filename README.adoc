@@ -76,7 +76,7 @@ def ajaxButtonCall = jsfPartialPost("request_ajax_button", "/ui/button/commandBu
     .check(status.is(200))
 ----
 
-As stated before we need a previous JSF call to store button id (*${btAjax}*), form id (*${form}*) and *viewState* in session. Here is the *initial* call:
+As stated before we need a previous JSF call to store button id in *${btAjax}* variable, form id in *${form}* variable and *viewState* in *${viewState} variable in gatling session. Here is the *initial* call:
 
 [source, scala]
 ----
