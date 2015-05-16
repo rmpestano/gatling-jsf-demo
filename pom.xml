@@ -49,6 +49,9 @@
                             <dataFolder>src/test/resources/data</dataFolder>
                             <bodiesFolder>src/test/resources/request-bodies</bodiesFolder>
                             <runMultipleSimulations>true</runMultipleSimulations>
+                            <!-- uncomment to select a simulation or use -D gatling.simulationClass=com.rmpestano...
+                            <simulationClass>com.rmpestano.gatling.perf.DatatableSelectionSimulation</simulationClass>
+                            !-->
                             <!--<simulationsFolder>src/test/scala/com/cdi/crud/perf</simulationsFolder>-->
                         </configuration>
                         <executions>

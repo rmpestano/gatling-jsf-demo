@@ -8,6 +8,10 @@ This sample app just shows how to execute JSF requests through http://gatling.io
 mvn gatling:execute
 ----
 
+TIP: To chose a specific simulation use _-D_ flag, example: +
+_-Dgatling.simulationClass=com.rmpestano.gatling.perf.DatatableSelectionSimulation_ +
+otherwise all simulations will run.
+
 == Example
 
 When working with JSF you need to handle the http://stackoverflow.com/questions/2910741/what-is-viewstate-in-jsf-and-how-is-it-used[Viewstate^] which basically stores JSF component tree state.
@@ -134,6 +138,12 @@ here is Gatling response to confirm the partial event is fired:
 
 ----
 <partial-response id="j_id1"><changes><update id="j_idt87:out1"><![CDATA[<span id="j_idt87:out1">Gatling, JSF and Primefaces rules</span>]]></update><update id="j_id1:javax.faces.ViewState:0"><![CDATA[5642006804874081440:6246997700145170162]]></update></changes></partial-response>
+----
+
+TIP: For debugging purposes just enable request and response logs in test/resources/*logback.xml* file: +
+[source, xml]
+----
+<logger name="io.gatling.http" level="TRACE" />
 ----
 
 == Test Result
