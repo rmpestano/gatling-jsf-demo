@@ -6,7 +6,7 @@
 :experimental:
 :source-highlighter: coderay
 
-= Gatling JSF demo[https://rmpestano.github.io/gatling-jsf-demo/^]
+= https://rmpestano.github.io/gatling-jsf-demo/[Gatling JSF demo^]
 
 This sample app just shows how to execute JSF requests through http://gatling.io/#/[Gatling stress tool] against http://www.primefaces.org/showcase/[Primefaces showcase^].
 
