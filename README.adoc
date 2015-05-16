@@ -114,24 +114,24 @@ For ajax behaviour event the approach is quite similar, here goes an example of 
     val outputValueCheck = xpath("//*[contains(@id,'out1') and contains(text(),'Gatling, JSF and Primefaces rules')]")
 
 
-    def ajaxEventRequest = jsfPartialPost("request_ajax_event", "/ui/ajax/event.xhtml")
-        .formParam("javax.faces.source", "${inputId}")
-        .formParam("javax.faces.partial.execute", "${inputId}")
-        .formParam("javax.faces.behavior.event", "keyup")
-        .formParam("javax.faces.partial.event", "keyup")
-        .formParam("javax.faces.partial.render","${outputId}")
-        .formParam("${inputId}", "Gatling, JSF and Primefaces rules")
-        .formParam("${form}", "${form}")
-        .check(status.is(200), outputValueCheck)
+  def ajaxEventRequest = jsfPartialPost("request_ajax_event", "/ui/ajax/event.xhtml")
+      .formParam("javax.faces.source", "${inputId}")
+      .formParam("javax.faces.partial.execute", "${inputId}")
+      .formParam("javax.faces.behavior.event", "keyup")
+      .formParam("javax.faces.partial.event", "keyup")
+      .formParam("javax.faces.partial.render","${outputId}")
+      .formParam("${inputId}", "Gatling, JSF and Primefaces rules")
+      .formParam("${form}", "${form}")
+      .check(status.is(200), outputValueCheck)
 
-    val AjaxEventScenario = scenario("ajaxEvent scenario")
-       .exec(
-         jsfGet("initialRequest", "/ui/ajax/event.xhtml")
-           .check(status.is(200), inputIdCheck,outputIdCheck, formIdCheck)
-       )
-       .pause(2)
-       .exec(ajaxEventRequest)
-       .pause(1)
+  val AjaxEventScenario = scenario("ajaxEvent scenario")
+      .exec(
+        jsfGet("initialRequest", "/ui/ajax/event.xhtml")
+          .check(status.is(200), inputIdCheck,outputIdCheck, formIdCheck)
+      )
+      .pause(2)
+      .exec(ajaxEventRequest)
+      .pause(1)
 ----
 
 here is Gatling response to confirm the partial event is fired:
