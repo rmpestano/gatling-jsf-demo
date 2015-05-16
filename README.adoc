@@ -76,7 +76,7 @@ And here is the correspondent Gatling call:
 def ajaxButtonCall = jsfPartialPost("request_ajax_button", "/ui/button/commandButton.xhtml")
     .formParam("javax.faces.source", "${btAjax}")
     .formParam("javax.faces.partial.execute", "@all")
-    .formParam(javax.faces.partial.render:"${growlId}")
+    .formParam("javax.faces.partial.render","${growlId}")
     .formParam("${btAjax}", "${btAjax}")
     .formParam("${form}", "${form}")
     .check(status.is(200),growlResponseCheck)
@@ -111,13 +111,13 @@ val growlIdCheck = css("span[id$='growl']", "id")
     .saveAs("growlId")
 ----
 
-TIP: css selector *$=* denotes to _'endsWith'_ and is really helpful when working with JSF _prepended_ id strategy.
+TIP: css selector *$=* denotes to _'endsWith'_ and is very helpful when working with JSF _prepended_ id strategy.
 
 === Check the response
 
 As you've probably noticed, there is a *growlResponseCheck* after the request completes to assure that it has performed as the real application.
 
-The message *Welcome to Primefaces!!* is shown in growl component in the following format (again firebug is your best friend, use firebug tab *response*):
+The response contains the growl component, use firebug tab *response* to se its format:
 
 [source, xml]
 ----
@@ -128,17 +128,6 @@ sticky:false,life:2000,escape:true,msgs:[{summary:"Welcome to Primefaces!!",deta
 <update id="j_id1:javax.faces.ViewState:0"><![CDATA[3557342521411359398:379028951273673786]]></update></changes></partial-response>
 ----
 
-IMPORTANT: Gatling response is a bit different then firebug (in this case) and that's because Gatling *DOES NOT* execute javascript contained in responses (that's a browser thing)
-[source,xml]
-.Gatling response
-----
-<partial-response id="j_id1"><changes><update id="j_idt87:growl"><![CDATA[<span id="j_idt87:growl" class="ui-growl-pl"
-data-widget="widget_j_idt87_growl" data-summary="data-summary" data-severity="all,error" data-redisplay="true"></span>
-<script id="j_idt87:growl_s" type="text/javascript">$(function(){PrimeFaces.cw('Growl','widget_j_idt87_growl',
-{id:'j_idt87:growl',sticky:false,life:2000,escape:true,msgs:[]});});</script>]]></update>
-<update id="j_id1:javax.faces.ViewState:0"><![CDATA[5739601299644801453:-7228355357233819622]]></update>
-</changes></partial-response>
-----
 
 There are multiple ways to check that response, I'll use xpath this time:
 
