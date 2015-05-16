@@ -147,9 +147,9 @@ TIP: For debugging purposes just enable request and response logs in test/resour
 ----
 
 == Datatable row select event
-Here is an example of row select event from this showcase page (third table):http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml[http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml^]
+Here is an example of row select event from this http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml[showcase page (third table)].
 
-First thing is save row id because its needed for row select event:
+First thing is save row id (in the *initial* request) because its needed for row select event:
 
 [source, scala]
 ----
@@ -195,6 +195,7 @@ and here is the check:
   .saveAs("growlValue") //just to confirm in printSession
 ----
 
+Check comlete https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/DatatableSelectionSimulation.scala[datatable simulation here].
 
 == Test Result
 
