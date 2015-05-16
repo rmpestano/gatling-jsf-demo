@@ -18,7 +18,7 @@ class AjaxEventSimulation extends Simulation {
 
   //checks the partial response xml result, example:
   //<partial-response id="j_id1"><changes><update id="j_idt87:out1"><![CDATA[<span id="j_idt87:out1">Gatling, JSF and Primefaces rules</span>]]>
-  val outputValueCheck = xpath("//*[@id, contains(@id,'out1') and @value ='Gatling, JSF and Primefaces rules']")
+  val outputValueCheck = xpath("//*[contains(@id,'out1') and contains(text(),'Gatling, JSF and Primefaces rules')]")
 
 
 

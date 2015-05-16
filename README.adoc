@@ -111,8 +111,8 @@ For ajax behaviour event the approach is quite similar, here goes an example of 
     .saveAs("outputId")
 
   //checks the partial response xml result
-    val outputValueCheck = xpath("//*[@id, contains(@id,'out1') and @value ='Gatling, JSF and Primefaces rules']")
-    .saveAs("outputValue")
+    val outputValueCheck = xpath("//*[contains(@id,'out1') and contains(text(),'Gatling, JSF and Primefaces rules')]")
+
 
     def ajaxEventRequest = jsfPartialPost("request_ajax_event", "/ui/ajax/event.xhtml")
         .formParam("javax.faces.source", "${inputId}")
