@@ -1,3 +1,4 @@
+:toc: right
 :icons: font
 :linkattrs:
 :sectanchors:
@@ -5,7 +6,7 @@
 :experimental:
 :source-highlighter: coderay
 
-= Gatling JSF demo
+= Gatling JSF demo[https://rmpestano.github.io/gatling-jsf-demo/^]
 
 This sample app just shows how to execute JSF requests through http://gatling.io/#/[Gatling stress tool] against http://www.primefaces.org/showcase/[Primefaces showcase^].
 
