@@ -76,7 +76,7 @@ def ajaxButtonCall = jsfPartialPost("request_ajax_button", "/ui/button/commandBu
     .check(status.is(200))
 ----
 
-As stated before we need a previous JSF call to store button id in *${btAjax}* variable, form id in *${form}* variable and *viewState* in *${viewState} variable in gatling session. Here is the *initial* call:
+As stated before we need a previous JSF call to store variables in *Gatling session* like button id in *${btAjax}* variable, form id in *${form}* and *viewState* in *${viewState}*. Here is the *initial* call:
 
 [source, scala]
 ----
@@ -93,6 +93,8 @@ and then the checks that stores component's id in Gatling session:
   val formIdCheck = css("form", "id")
     .saveAs("form")
 ----
+
+Complete commmandButton simulation can be https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/CommandButtonSimulation.scala[found here^].
 
 == Ajax Behaviour event
 
@@ -145,6 +147,9 @@ TIP: For debugging purposes just enable request and response logs in test/resour
 ----
 <logger name="io.gatling.http" level="TRACE" />
 ----
+
+Complete ajaxEvent simulation can be https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/AjaxEventSimulation.scala[found here^].
+
 
 == Datatable row select event
 Here is an example of row select event from this http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml[showcase page (third table)^].
