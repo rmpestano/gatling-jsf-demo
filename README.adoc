@@ -154,7 +154,7 @@ Complete ajaxEvent simulation can be https://github.com/rmpestano/gatling-jsf-de
 == Datatable row select event
 Here is an example of row select event from this http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml[showcase page (third table)^].
 
-First thing is save row id (in the *initial* request) because its needed for row select event:
+First thing to do is to save row id (in the *initial* request) because its needed for row select event:
 
 [source, scala]
 ----
@@ -178,7 +178,7 @@ def datatableSelectCarRowEvent = jsfPartialPost("request_datatable_select_car", 
     .check(status.is(200), growlCheck)
 ----
 
-growl check verifies the *partial response* which will be something like below:
+*growlCheck* verifies the *partial response* which will be something like below:
 
 [source,xml]
 ----
