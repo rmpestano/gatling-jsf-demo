@@ -49,7 +49,7 @@ def jsfGet(name: String, url: Expression[String]) =
     .check(jsfPartialViewStateCheck)
 ----
 
-<1> JSF ajax call indication, JSF will return a xml in the response
+<1> JSF _ajax_ call indication, JSF will return a xml in the response
 <2> already stored (in gatling session) view state
 
 So we basically have two kinds of request, a _normal_ and a _partial_ http request. Partial requests are mainly to deal with ajax calls (e.g p:ajax or f:ajax).
@@ -147,7 +147,7 @@ TIP: For debugging purposes just enable request and response logs in test/resour
 ----
 
 == Datatable row select event
-Here is an example of row select event from this http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml[showcase page (third table)].
+Here is an example of row select event from this http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml[showcase page (third table)^].
 
 First thing is save row id (in the *initial* request) because its needed for row select event:
 
@@ -192,10 +192,10 @@ and here is the check:
 [source, scala]
 ----
  val growlCheck = css("script[id$='msgs_s']")
-  .saveAs("growlValue") //just to confirm in printSession
+  .saveAs("growlValue") //save is just to confirm in printSession
 ----
 
-Check comlete https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/DatatableSelectionSimulation.scala[datatable simulation here].
+Check complete https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/DatatableSelectionSimulation.scala[datatable simulation here^].
 
 == Test Result
 
