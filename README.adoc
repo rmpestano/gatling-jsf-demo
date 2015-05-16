@@ -146,6 +146,56 @@ TIP: For debugging purposes just enable request and response logs in test/resour
 <logger name="io.gatling.http" level="TRACE" />
 ----
 
+== Datatable row select event
+Here is an example of row select event from this showcase page (third table):http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml[http://www.primefaces.org/showcase/ui/data/datatable/selection.xhtml^]
+
+First thing is save row id because its needed for row select event:
+
+[source, scala]
+----
+ val tableRowCheck = css("tbody[id='form:eventsDT_data'] > tr[role='row'] > td[role='gridcell']")
+    .saveAs("rowId")
+----
+
+now we are ready to fire the event:
+
+[source, scala]
+----
+
+def datatableSelectCarRowEvent = jsfPartialPost("request_datatable_select_car", "/ui/data/datatable/selection.xhtml")
+    .formParam("javax.faces.source", "form:eventsDT")
+    .formParam("javax.faces.partial.execute", "form:eventsDT")
+    .formParam("javax.faces.partial.render", "form:msgs")
+    .formParam("form", "form")
+    .formParam("form:eventsDT_instantSelectedRowKey","${rowId}")
+    .formParam("javax.faces.behavior.event","rowSelect")
+    .formParam("javax.faces.partial.event","rowSelect")
+    .check(status.is(200), growlCheck)
+----
+
+growl check verifies the *partial response* which will be something like below:
+
+[source,xml]
+----
+<partial-response id="j_id1"><changes><update id="form:msgs">
+<![CDATA[<span id="form:msgs" class="ui-growl-pl" data-widget="widget_form_msgs" data-summary="data-summary" data-detail="data-detail"
+data-severity="all,error" data-redisplay="true"></span><script id="form:msgs_s" type="text/javascript">
+$(function(){PrimeFaces.cw('Growl','widget_form_msgs',{id:'form:msgs',sticky:false,life:6000,escape:true,msgs:
+[{summary:"Car Selected",detail:"77698f6d",severity:'info'}]});});</script>]]></update>
+<update id="j_id1:javax.faces.ViewState:0"><![CDATA[-5013885715335809736:669939156470551654]]></update></changes></partial-response>
+----
+
+TIP: Use firebug *tab 'network'* to check request and response format
+
+and here is the check:
+
+[source, scala]
+----
+ val growlCheck = css("script[id$='msgs_s']")
+  .saveAs("growlValue") //just to confirm in printSession
+----
+
+
 == Test Result
 
 the output should be something like this:
