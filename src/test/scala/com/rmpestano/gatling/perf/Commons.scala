@@ -50,6 +50,7 @@ object Commons {
   def jsfPartialPost(name: String, url: Expression[String]) = http(name)
     .post(url)
     .header("Faces-Request", "partial/ajax")
+    .header("X-Requested-With", "XMLHttpRequest")
     .formParam("javax.faces.partial.ajax", "true")
     .formParam("javax.faces.ViewState", "${viewState}")
     .check(jsfPartialViewStateCheck)

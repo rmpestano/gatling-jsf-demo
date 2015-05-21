@@ -22,7 +22,7 @@ class DatatableSelectionSimulation extends Simulation {
    .saveAs("rowId")
 
   //datatable rowSelect response: <partial-response id="j_id1"><changes><update id="form:msgs"><![CDATA[<span id="form:msgs" class="ui-growl-pl" data-widget="widget_form_msgs" data-summary="data-summary" data-detail="data-detail" data-severity="all,error" data-redisplay="true"></span><script id="form:msgs_s" type="text/javascript">$(function(){PrimeFaces.cw('Growl','widget_form_msgs',{id:'form:msgs',sticky:false,life:6000,escape:true,msgs:[{summary:"Car Selected",detail:"c022689b",severity:'info'}]});});</script>]]></update><update id="j_id1:javax.faces.ViewState:0"><![CDATA[6671433459483031284:-6868499056774026453]]></update></changes></partial-response>
-  val growlCheck = css("script[id$='msgs_s']")
+  val growlCheck = xpath("//*[contains(text(),'Car Selected')]")
   .saveAs("growlValue") //just to confirm in printSession
 
 

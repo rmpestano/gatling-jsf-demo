@@ -23,8 +23,8 @@ class CommandButtonSimulation extends Simulation {
   val growlIdCheck = css("span[id$='growl']", "id")
     .saveAs("growlId")
 
-  val growlResponseCheck = xpath("//*[contains(text(),'growl_s')]")
-  //val growlResponseCheck = css("script[id*='growl_s']")
+
+  val growlResponseCheck = xpath("//*[contains(text(),'Welcome to Primefaces!!')]")
 
   def ajaxButtonCall = jsfPartialPost("request_ajax_button", "/ui/button/commandButton.xhtml")
     .formParam("javax.faces.source", "${btAjax}")

@@ -53,14 +53,15 @@ def jsfPost(name: String, url: Expression[String]) = http(name)
 
 def jsfPartialPost(name: String, url: Expression[String]) = http(name)
     .post(url)
-    .header("Faces-Request", "partial/ajax") <1>
-    .formParam("javax.faces.partial.ajax", "true") <1>
-    .formParam("javax.faces.ViewState", "${viewState}") <2>
+	.header("X-Requested-With", "XMLHttpRequest") <1>
+    .header("Faces-Request", "partial/ajax") <2>
+    .formParam("javax.faces.partial.ajax", "true") <2>
+    .formParam("javax.faces.ViewState", "${viewState}") <3>
     .check(jsfPartialViewStateCheck)
 ----
-
-<1> JSF _ajax_ call indication, JSF will return a xml in the response
-<2> already stored (in gatling session) view state
+<1> http ajax call format
+<2> JSF _ajax_ call indication, JSF will return a xml in the response
+<3> already stored (in gatling session) view state
 
 So we basically have two kinds of request, a _normal_ and a _partial_ http request.
 Partial requests are mainly to deal with ajax calls (e.g p:ajax or f:ajax).
@@ -141,10 +142,28 @@ There are multiple ways to check that response, I'll use xpath this time:
 
 [source, scala]
 ----
-  val growlResponseCheck = xpath("//*[contains(text(),'growl_s')]")
-  //css selector example
-  //val growlResponseCheck = css("script[id*='growl_s']")
+  val growlResponseCheck = xpath("//*[contains(text(),'Welcome to Primefaces!!')]")
 ----
+
+[WARNING]
+====
+If you use wrong selector the request will *fail*, example: 
+----
+xpath("//*[contains(text(),'Welcome to Richfaces!!')]")
+----
+will fail with: 
+----
+---- Response Time Distribution ------------------------------------------------
+> t < 800 ms                                            34 ( 61%)
+> 800 ms < t < 1200 ms                                   9 ( 16%)
+> t > 1200 ms                                           12 ( 21%)
+> failed                                                 1 (  2%)
+---- Errors --------------------------------------------------------------------
+> xpath(//*[contains(text(),'Welcome to Richfaces!!')]).find(0).exists      1 (100,0%)
+, found nothing
+===============================================================================
+
+====
 
 
 Complete CommmandButton simulation can be https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/CommandButtonSimulation.scala[found here^].
@@ -248,7 +267,7 @@ and here is the check:
 [source, scala]
 .Partial response check
 ----
- val growlCheck = css("script[id$='msgs_s']")
+ val growlCheck = xpath("//*[contains(text(),'Car Selected')]")
   .saveAs("growlValue") //save is just to confirm in printSession
 ----
 
