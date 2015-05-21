@@ -596,9 +596,10 @@ def jsfPost(name: String, url: Expression[String]) = http(name)
 
 def jsfPartialPost(name: String, url: Expression[String]) = http(name)
     .post(url)
-    .header(&quot;Faces-Request&quot;, &quot;partial/ajax&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
-    .formParam(&quot;javax.faces.partial.ajax&quot;, &quot;true&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
-    .formParam(&quot;javax.faces.ViewState&quot;, &quot;${viewState}&quot;) <i class="conum" data-value="2"></i><b>(2)</b>
+        .header(&quot;X-Requested-With&quot;, &quot;XMLHttpRequest&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+    .header(&quot;Faces-Request&quot;, &quot;partial/ajax&quot;) <i class="conum" data-value="2"></i><b>(2)</b>
+    .formParam(&quot;javax.faces.partial.ajax&quot;, &quot;true&quot;) <i class="conum" data-value="2"></i><b>(2)</b>
+    .formParam(&quot;javax.faces.ViewState&quot;, &quot;${viewState}&quot;) <i class="conum" data-value="3"></i><b>(3)</b>
     .check(jsfPartialViewStateCheck)</code></pre>
 </div>
 </div>
@@ -606,10 +607,14 @@ def jsfPartialPost(name: String, url: Expression[String]) = http(name)
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>JSF <em>ajax</em> call indication, JSF will return a xml in the response</td>
+<td>http ajax call format</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>JSF <em>ajax</em> call indication, JSF will return a xml in the response</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>already stored (in gatling session) view state</td>
 </tr>
 </table>
@@ -741,10 +746,43 @@ sticky:false,life:2000,escape:true,msgs:[{summary:&quot;Welcome to Primefaces!!&
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="scala">  val growlResponseCheck = xpath(&quot;//*[contains(text(),'growl_s')]&quot;)
-  //css selector example
-  //val growlResponseCheck = css(&quot;script[id*='growl_s']&quot;)</code></pre>
+<pre class="CodeRay highlight"><code data-lang="scala">  val growlResponseCheck = xpath(&quot;//*[contains(text(),'Welcome to Primefaces!!')]&quot;)</code></pre>
 </div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you use wrong selector the request will <strong>fail</strong>, example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>xpath("//*[contains(text(),'Welcome to Richfaces!!')]")</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will fail with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>---- Response Time Distribution ------------------------------------------------
+&gt; t &lt; 800 ms                                            34 ( 61%)
+&gt; 800 ms &lt; t &lt; 1200 ms                                   9 ( 16%)
+&gt; t &gt; 1200 ms                                           12 ( 21%)
+&gt; failed                                                 1 (  2%)
+---- Errors --------------------------------------------------------------------
+&gt; xpath(//*[contains(text(),'Welcome to Richfaces!!')]).find(0).exists      1 (100,0%)
+, found nothing
+===============================================================================</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Complete CommmandButton simulation can be <a href="https://github.com/rmpestano/gatling-jsf-demo/blob/master/src/test/scala/com/rmpestano/gatling/perf/CommandButtonSimulation.scala" target="_blank">found here</a>.</p>
@@ -873,7 +911,7 @@ $(function(){PrimeFaces.cw('Growl','widget_form_msgs',{id:'form:msgs',sticky:fal
 <div class="listingblock">
 <div class="title">Partial response check</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="scala"> val growlCheck = css(&quot;script[id$='msgs_s']&quot;)
+<pre class="CodeRay highlight"><code data-lang="scala"> val growlCheck = xpath(&quot;//*[contains(text(),'Car Selected')]&quot;)
   .saveAs(&quot;growlValue&quot;) //save is just to confirm in printSession</code></pre>
 </div>
 </div>
@@ -932,7 +970,7 @@ Global: percentage of successful requests is greater than 99 : true
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-16 20:31:01 BRT
+Last updated 2015-05-21 10:27:46 Hora oficial do Brasil
 </div>
 </div>
 </body>
