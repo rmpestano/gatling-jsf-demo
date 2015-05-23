@@ -596,7 +596,7 @@ def jsfPost(name: String, url: Expression[String]) = http(name)
 
 def jsfPartialPost(name: String, url: Expression[String]) = http(name)
     .post(url)
-        .header(&quot;X-Requested-With&quot;, &quot;XMLHttpRequest&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
+    .header(&quot;X-Requested-With&quot;, &quot;XMLHttpRequest&quot;) <i class="conum" data-value="1"></i><b>(1)</b>
     .header(&quot;Faces-Request&quot;, &quot;partial/ajax&quot;) <i class="conum" data-value="2"></i><b>(2)</b>
     .formParam(&quot;javax.faces.partial.ajax&quot;, &quot;true&quot;) <i class="conum" data-value="2"></i><b>(2)</b>
     .formParam(&quot;javax.faces.ViewState&quot;, &quot;${viewState}&quot;) <i class="conum" data-value="3"></i><b>(3)</b>
