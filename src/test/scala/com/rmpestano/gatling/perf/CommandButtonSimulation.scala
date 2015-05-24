@@ -23,6 +23,9 @@ class CommandButtonSimulation extends Simulation {
   val growlIdCheck = css("span[id$='growl']", "id")
     .saveAs("growlId")
 
+  val formButtonCheck = css("div[class$='Implementation'] > form","id") //first form is for themeSwitcher, see html source   
+   .saveAs("buttonForm")
+
 
   val growlResponseCheck = xpath("//*[contains(text(),'Welcome to Primefaces!!')]")
 
@@ -31,19 +34,19 @@ class CommandButtonSimulation extends Simulation {
     .formParam("javax.faces.partial.execute", "@all")
     .formParam("javax.faces.partial.render", "${growlId}")
     .formParam("${btAjax}", "${btAjax}")
-    .formParam("${form}", "${form}")
+    .formParam("${buttonForm}", "${buttonForm}")
     .check(status.is(200), growlResponseCheck)
 
   def normalButtonCall =
     jsfPost("normal_request", "/ui/button/commandButton.xhtml")
       .formParam("${btNonAjax}", "${btNonAjax}")
-      .formParam("${form}", "${form}")
+      .formParam("${buttonForm}", "${buttonForm}")
       .check(status.is(200))
 
   val commandButtonScenario = scenario("commandButton scenario")
     .exec(
       jsfGet("saveState", "/ui/button/commandButton.xhtml")
-        .check(status.is(200), ajaxButtonIdCheck, formIdCheck, nonAjaxButtonIdCheck, growlIdCheck)
+        .check(status.is(200), ajaxButtonIdCheck, formButtonCheck, nonAjaxButtonIdCheck, growlIdCheck)
     )
     .pause(2)
     .exec(ajaxButtonCall)

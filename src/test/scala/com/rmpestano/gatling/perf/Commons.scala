@@ -11,7 +11,7 @@ object Commons {
 
   val httpProtocol = http
     .baseURL("http://www.primefaces.org/showcase")
-    .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+    .acceptHeader("text/html,application/xhtml+xml,text/xml, application/xml;q=0.9,*/*;q=0.01")
     .acceptEncodingHeader("gzip, deflate")
     .inferHtmlResources()
     .connection( """keep-alive""")
