@@ -802,7 +802,7 @@ sticky:false,life:2000,escape:true,msgs:[{summary:&quot;Welcome to Primefaces!!&
     .saveAs(&quot;form&quot;)
 
   val inputIdCheck = css(&quot;input[id$='firstname']&quot;, &quot;id&quot;)
-    .saveAs(&quot;inputId&quot;) //stores in gatling session id of input which id that endswith 'firstname'
+    .saveAs(&quot;inputId&quot;) //stores in gatling session id of input which id endswith 'firstname'
 
   val outputIdCheck = css(&quot;span[id$='out1']&quot;, &quot;id&quot;)
     .saveAs(&quot;outputId&quot;)
@@ -965,12 +965,28 @@ Global: percentage of successful requests is greater than 99 : true
 <img src="gatling-report-example.png" alt="Gatling report" width="800">
 </div>
 </div>
+<div class="paragraph">
+<p>see full generated reports here:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://rmpestano.github.io/gatling-jsf-demo/reports/command-button/index.html" target="_blank">CommandButton simulation</a></p>
+</li>
+<li>
+<p><a href="https://rmpestano.github.io/gatling-jsf-demo/reports/ajax-event/index.html" target="_blank">AjaxEvent simulation</a></p>
+</li>
+<li>
+<p><a href="https://rmpestano.github.io/gatling-jsf-demo/reports/datatable/index.html" target="_blank">Datatable simulation</a></p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 10:27:46 Hora oficial do Brasil
+Last updated 2015-05-23 21:43:38 BRT
 </div>
 </div>
 </body>
